@@ -1,0 +1,5 @@
+network:
+  actor_hidden_sizes: [256, 256]
+  sac_critic_hidden_sizes: [256, 256]
+  scale_lb: 0.1
+  default_policy_scale: 1.0

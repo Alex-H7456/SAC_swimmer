@@ -13,17 +13,21 @@ POLYAK_FACTOR = 0.995
 TOTAL_FR = 1000000
 FR_SKIP = 1
 OPTIM_STEPS = 100
+BATCH_SIZE = 256
 
 
 
 class Trainer:
     def __init__(
-            self, env, policy, actor_network, qvalue_network
+            self, env, actor, qvalue_network
             ):
-        self._collector = Collector(env, policy, frames_per_batch=BATCH_FRAMES)
-        self._loss_module = SACLoss(actor_network, qvalue_network)
+        self._collector = Collector(env, actor, frames_per_batch=BATCH_FRAMES)
+        self._loss_module = SACLoss(actor, qvalue_network)
         self._optimizer = optim.Adam(self._loss_module.parameters(), lr=LR)
-        self._replay_buffer = ReplayBuffer(storage=LazyTensorStorage(BUFFER_STORAGE))
+        self._replay_buffer = ReplayBuffer(
+            storage=LazyTensorStorage(BUFFER_STORAGE),
+            batch_size=BATCH_SIZE,
+        )
         self._target_net_updater = SoftUpdate(self._loss_module, eps=POLYAK_FACTOR)
         self._trainer = self._create_trainer()
 
@@ -37,6 +41,8 @@ class Trainer:
             optimizer=self._optimizer,
             replay_buffer=self._replay_buffer,
             target_net_updater=self._target_net_updater,
+            #enable_logging=False,
+            #progress_bar=False,
         )
         return trainer
     def train(self):
