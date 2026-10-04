@@ -9,7 +9,7 @@ from tensordict.nn import InteractionType, TensorDictModule, TensorDictSequentia
 class Agent:
     def __init__(self, cfg, env):
         self.env = env
-        self.critic = SAC_nets.basic_sac_critic(cfg)
+        self.critic = SAC_nets.basic_sac_critic(cfg, env)
         self.actor = self._process_actor(cfg)
         self.trainer = SAC_trainer.Trainer(
             env, self.actor, self.critic
@@ -17,7 +17,7 @@ class Agent:
 
  
     def _process_actor(self,cfg):
-        actor_net = SAC_nets.basic_actor(cfg, self.env.action_spec)
+        actor_net = SAC_nets.basic_actor(cfg, self.env)
         actor_extractor = TensorDictModule(
             NormalParamExtractor(
                 scale_mapping=f"biased_softplus_{cfg["network"]["default_policy_scale"]}",
