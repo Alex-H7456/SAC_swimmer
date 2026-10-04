@@ -1,21 +1,17 @@
 from dataclasses import dataclass
 from types import SimpleNamespace
 
-from torchrl.envs import GymEnv
+from torchrl.envs import GymEnv, RewardSum, TransformedEnv
 
 ENV_ID = "Pendulum-v1"
 
 
-@dataclass
-class NetworkConfig:
-    actor_hidden_sizes: tuple[int, ...] = (256, 256)
-    sac_critic_hidden_sizes: tuple[int, ...] = (256, 256)
-
-
-def make_env(render_mode: str | None = None) -> GymEnv:
+def make_env(render_mode: str | None = None) -> TransformedEnv:
     kwargs = {} if render_mode is None else {"render_mode": render_mode}
-    return GymEnv(ENV_ID, **kwargs)
-
-
-def make_config() -> SimpleNamespace:
-    return SimpleNamespace(network=NetworkConfig())
+    return TransformedEnv(
+        GymEnv(ENV_ID, **kwargs),
+        RewardSum(
+            in_keys=["reward"],
+            out_keys=["reward_sum"],
+        ),
+    )

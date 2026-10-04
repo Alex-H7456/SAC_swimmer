@@ -2,6 +2,14 @@ from env.test_env import make_env
 from model.agent import Agent
 from torchrl.envs import GymEnv
 import yaml 
+import logging 
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",  # Custom time format
+    level=logging.INFO,
+)
+logger = logging.getLogger(__name__)
 
 CHECKPOINT_PATH = "checkpoints/actor.pt"
 
@@ -17,14 +25,12 @@ def build_agent() -> tuple[Agent, GymEnv]:
 
 def main() -> None:
     agent, env = build_agent()
-    try:
-        print(f"Environment: {env}")
-        print(f"Observation spec: {env.observation_spec}")
-        print(f"Action spec: {env.action_spec}")
-        agent.train()
-        agent.save_actor(CHECKPOINT_PATH)
-    finally:
-        env.close()
+    logger.info(f"Environment: {env} \n")
+    logger.info(f"Observation spec: {env.observation_spec} \n")
+    logger.info(f"Action spec: {env.action_spec} \n ")
+    agent.train()
+    agent.save_actor(CHECKPOINT_PATH)
+    env.close()
 
 
 if __name__ == "__main__":

@@ -3,3 +3,4 @@ torch
 pyyaml 
 gymnasium 
 pygame
+tqdm 

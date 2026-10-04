@@ -37,3 +37,11 @@ The checkpoint contains the actor policy weights only. It is sufficient for
 evaluation, but not for resuming the complete optimizer/replay-buffer training
 state. An interrupted training process does not currently write the final
 actor checkpoint.
+
+Training metrics are also written by TorchRL's CSV logger under
+`logs/sac_training/scalars/`. For example,
+`logs/sac_training/scalars/r_training.csv` contains step/reward pairs for the
+mean per-step reward, while `r_total.csv` contains accumulated episode rewards.
+The first column is the number of collected environment frames. Metrics are
+logged once per collector batch (currently every 1,000 frames), so these files
+can be plotted after training.

@@ -3,8 +3,9 @@ from torchrl.objectives import SACLoss
 from torchrl.data import ReplayBuffer, LazyTensorStorage
 from torchrl.objectives.utils import SoftUpdate
 from torch import optim
+from torchrl.record.loggers import CSVLogger
 from torchrl.trainers.algorithms import SACTrainer
-
+import logging
 #Use Pytorch Defaults
 BATCH_FRAMES = 1000
 LR = 3e-4
@@ -14,8 +15,9 @@ TOTAL_FR = 1000000
 FR_SKIP = 1
 OPTIM_STEPS = 100
 BATCH_SIZE = 256
+LOG_DIR = "logs"
 
-
+logger = logging.getLogger(__name__)
 
 class Trainer:
     def __init__(
@@ -29,6 +31,10 @@ class Trainer:
             batch_size=BATCH_SIZE,
         )
         self._target_net_updater = SoftUpdate(self._loss_module, eps=POLYAK_FACTOR)
+        self._logger = CSVLogger(
+            exp_name="sac_training",
+            log_dir=LOG_DIR,
+        )
         self._trainer = self._create_trainer()
 
     def _create_trainer(self):
@@ -41,12 +47,15 @@ class Trainer:
             optimizer=self._optimizer,
             replay_buffer=self._replay_buffer,
             target_net_updater=self._target_net_updater,
-            enable_logging=False,
-            progress_bar=False,
+            logger=self._logger,
+            enable_logging=True,
+            progress_bar=True,
+            episode_reward_key="reward_sum",
+            log_interval=BATCH_FRAMES - 1,
         )
         return trainer
 
     def train(self):
-        print(f"Starting SAC training for {TOTAL_FR:,} frames.", flush=True)
+        logger.info(f"Starting SAC training for {TOTAL_FR:,} frames.")
         self._trainer.train()
-        print("SAC training complete.", flush=True)
+        logger.info("SAC training complete.")

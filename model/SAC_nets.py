@@ -3,7 +3,7 @@ from math import prod
 from tensordict.nn import TensorDictModule
 from torch import nn
 from torchrl.modules import MLP, NormalParamExtractor, ValueOperator
-
+import logging
 
 def _feature_count(spec):
     return prod(spec.shape) or 1

@@ -8,7 +8,9 @@ from torchrl.modules import MLP, NormalParamExtractor, ValueOperator
 from . import SAC_nets
 from . import SAC_trainer
 from tensordict.nn import InteractionType, TensorDictModule, TensorDictSequential
+import logging
 
+logger = logging.getLogger(__name__)
 class Agent:
     def __init__(self, cfg, env):
         self.env = env
@@ -29,7 +31,7 @@ class Agent:
             in_keys=["_actor_net_out"],
             out_keys=["loc", "scale"],
         )
-        actor_module = TensorDictSequential(actor_net, actor_extractor)
+        actor_module = TensorDictSequential(actor_net, actor_extractor) # type: ignore
 
         actor = ProbabilisticActor(
             spec=self.env.action_spec,
@@ -53,7 +55,7 @@ class Agent:
         checkpoint_path = Path(path)
         checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(self.actor.state_dict(), checkpoint_path)
-        print(f"Saved actor checkpoint to {checkpoint_path}", flush=True)
+        logger.info(f"Saved actor checkpoint to {checkpoint_path}", flush=True)
 
     def load_actor(self, path: str | Path) -> None:
         checkpoint_path = Path(path)
