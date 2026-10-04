@@ -12,8 +12,9 @@ class NetworkConfig:
     sac_critic_hidden_sizes: tuple[int, ...] = (256, 256)
 
 
-def make_env() -> GymEnv:
-    return GymEnv(ENV_ID)
+def make_env(render_mode: str | None = None) -> GymEnv:
+    kwargs = {} if render_mode is None else {"render_mode": render_mode}
+    return GymEnv(ENV_ID, **kwargs)
 
 
 def make_config() -> SimpleNamespace:

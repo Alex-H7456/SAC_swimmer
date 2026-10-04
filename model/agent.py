@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import torch
 from torchrl.modules import ProbabilisticActor, TanhNormal
 from tensordict.nn import TensorDictModule
 from torch import nn
@@ -45,3 +48,14 @@ class Agent:
 
     def train(self):
         self.trainer.train()
+
+    def save_actor(self, path: str | Path) -> None:
+        checkpoint_path = Path(path)
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(self.actor.state_dict(), checkpoint_path)
+        print(f"Saved actor checkpoint to {checkpoint_path}", flush=True)
+
+    def load_actor(self, path: str | Path) -> None:
+        checkpoint_path = Path(path)
+        state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
+        self.actor.load_state_dict(state_dict)

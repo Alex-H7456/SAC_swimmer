@@ -3,6 +3,8 @@ from model.agent import Agent
 from torchrl.envs import GymEnv
 import yaml 
 
+CHECKPOINT_PATH = "checkpoints/actor.pt"
+
 with open("config.yaml") as stream:
     cfg = yaml.safe_load(stream)
 
@@ -20,10 +22,10 @@ def main() -> None:
         print(f"Observation spec: {env.observation_spec}")
         print(f"Action spec: {env.action_spec}")
         agent.train()
+        agent.save_actor(CHECKPOINT_PATH)
     finally:
         env.close()
 
 
 if __name__ == "__main__":
     main()
-

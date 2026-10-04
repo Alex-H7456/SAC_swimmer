@@ -2,3 +2,4 @@ torchrl
 torch 
 pyyaml 
 gymnasium 
+pygame

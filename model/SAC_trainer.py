@@ -41,9 +41,12 @@ class Trainer:
             optimizer=self._optimizer,
             replay_buffer=self._replay_buffer,
             target_net_updater=self._target_net_updater,
-            #enable_logging=False,
-            #progress_bar=False,
+            enable_logging=False,
+            progress_bar=False,
         )
         return trainer
+
     def train(self):
+        print(f"Starting SAC training for {TOTAL_FR:,} frames.", flush=True)
         self._trainer.train()
+        print("SAC training complete.", flush=True)
