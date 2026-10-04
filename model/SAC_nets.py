@@ -1,20 +1,20 @@
-import torch
 from tensordict.nn import TensorDictModule
 from torch import nn
-from torchrl.modules import MLP, ValueOperator
-from typing import Tuple
+from torchrl.modules import MLP, NormalParamExtractor, ValueOperator
 
 
-def basic_actor(cfg, action_spec, in_keys=["observation"], out_keys=["action"]):
-    
-    activation = nn.ReLU
-
+def basic_actor(cfg, action_spec, in_keys=["observation"]):
     actor_module = TensorDictModule(
-        MLP(num_cells=cfg.network.actor_hidden_sizes,
-            out_features=2 * action_spec.shape[-1],
-            activation_class=activation),
+        nn.Sequential(
+            MLP(
+                num_cells=cfg.network.actor_hidden_sizes,
+                out_features=2 * action_spec.shape[-1],
+                activation_class=nn.ReLU,
+            ),
+            NormalParamExtractor(),
+        ),
         in_keys=in_keys,
-        out_keys=out_keys,
+        out_keys=["loc", "scale"],
     )
 
     return actor_module

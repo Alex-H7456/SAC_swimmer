@@ -16,7 +16,7 @@ OPTIM_STEPS = 100
 
 
 
-class trainer:
+class Trainer:
     def __init__(
             self, env, policy, actor_network, qvalue_network
             ):
@@ -25,8 +25,8 @@ class trainer:
         self._optimizer = optim.Adam(self._loss_module.parameters(), lr=LR)
         self._replay_buffer = ReplayBuffer(storage=LazyTensorStorage(BUFFER_STORAGE))
         self._target_net_updater = SoftUpdate(self._loss_module, eps=POLYAK_FACTOR)
+        self._trainer = self._create_trainer()
 
-# Create and run trainer
     def _create_trainer(self):
         trainer = SACTrainer(
             collector=self._collector,
@@ -39,7 +39,5 @@ class trainer:
             target_net_updater=self._target_net_updater,
         )
         return trainer
-
-    def train_agent(self):
-        trainer = self._create_trainer()
-        trainer.train()
+    def train(self):
+        self._trainer.train()
