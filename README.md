@@ -1,3 +1,5 @@
+## Credits
+Go to FluidFrame github repo, from which taylor green environment is taken. 
 ## Goal
 Create a SAC swimmer to train a swimmer to navigate vorticity in flow 
 ## Why 

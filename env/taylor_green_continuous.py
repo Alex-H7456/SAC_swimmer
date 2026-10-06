@@ -1,0 +1,84 @@
+from typing import Optional
+import numpy as np
+
+from env.taylor_green import (
+    _ALIGNMENT_TIMESCALE,
+    _DIFFUSIVITY_ROTATIONAL,
+    _DIFFUSIVITY_TRANSLATIONAL,
+    _FLOW_SPEED,
+    _MIN_FLOW_SPEED_THRESHOLD,
+    _SWIMMER_SPEED,
+    _TIMESTEP,
+    TaylorGreenEnvironment,
+)
+
+
+class TaylorGreenContinuousEnvironment(TaylorGreenEnvironment):
+
+    def __init__(
+        self,
+        dt: float = _TIMESTEP,
+        swimmer_speed: float = _SWIMMER_SPEED,
+        flow_speed: float = _FLOW_SPEED,
+        alignment_timescale: float = _ALIGNMENT_TIMESCALE,
+        diffusivity_rotational: float = _DIFFUSIVITY_ROTATIONAL,
+        diffusivity_translational: float = _DIFFUSIVITY_TRANSLATIONAL,
+        seed: Optional[int] = None,
+        action_type: Optional[str] = "continuous",
+    ):
+        """Initialise the environment, with continuous observations and continuous or discrete actions.
+
+        Args:
+            action_type: "discrete" or "continuous" (two dimensional)
+        """
+        super().__init__(
+            dt=dt,
+            swimmer_speed=swimmer_speed,
+            flow_speed=flow_speed,
+            alignment_timescale=alignment_timescale,
+            diffusivity_rotational=diffusivity_rotational,
+            diffusivity_translational=diffusivity_translational,
+            seed=seed,
+        )
+        self.action_type = action_type
+        if self.action_type:
+            if self.action_type not in ["discrete", "continuous"]:
+                raise ValueError(
+                    f"Invalid action_type {self.action_type!r}. Expected 'discrete', 'continuous', or None."
+                )
+
+    def _get_observation(self):
+        """
+        Returns:
+            np.ndarray: observation vector, all components are in [-1, 1].
+        """
+
+        if abs(self.u0) > _MIN_FLOW_SPEED_THRESHOLD:
+            vorticity_scaled = self.flow_vorticity / self.u0
+        else:
+            vorticity_scaled = 0
+
+        orientation = np.arctan2(self.swimming_velocity[1], self.swimming_velocity[0])
+        swimmer_position_x = self.swimmer_position[0] % (2 * np.pi)
+        swimmer_position_y = self.swimmer_position[1] % (2 * np.pi)
+        return np.array(
+            [
+                vorticity_scaled,
+                np.cos(orientation),
+                np.sin(orientation),
+                np.cos(swimmer_position_x),
+                np.sin(swimmer_position_x),
+                np.cos(swimmer_position_y),
+                np.sin(swimmer_position_y),
+            ]
+        )
+
+    def get_preferred_orientation(self, action):
+        """Transforms the action into a preferred swimmer orientation."""
+
+        if self.action_type == "continuous":
+            orientation_preferred = np.arctan2(action[1], action[0])
+        else:
+            orientation_preferred = action * np.pi / 2
+
+        return orientation_preferred

@@ -1,6 +1,7 @@
 from env.test_env import make_env
 from model.agent import Agent
 from torchrl.envs import GymEnv
+from env.taylor_green_gym import make_taylor_green_continuous_env
 import yaml 
 import logging 
 
@@ -16,18 +17,24 @@ CHECKPOINT_PATH = "checkpoints/actor.pt"
 with open("config.yaml") as stream:
     cfg = yaml.safe_load(stream)
 
-def build_agent() -> tuple[Agent, GymEnv]:
-    """Create the environment and connect it to the SAC agent."""
-    env = make_env()
-    agent = Agent(cfg, env)
-    return agent, env
-
 
 def main() -> None:
-    agent, env = build_agent()
+    if not cfg["solver"]["taylor_green"]:
+        env = make_env() #Using test gym environment for inverted pendulum 
+    else:
+        print("Using closed-form analytical solution ...")
+        env = make_taylor_green_continuous_env(
+            dt=0.01,
+            swimmer_speed= cfg["solver"]["swimmer_speed"],
+            alignment_timescale= cfg["solver"]["alignment_timescale"],
+            seed=42,
+        )  # initialise environment
+
+    agent = Agent(cfg,env)
     logger.info(f"Environment: {env} \n")
     logger.info(f"Observation spec: {env.observation_spec} \n")
     logger.info(f"Action spec: {env.action_spec} \n ")
+
     agent.train()
     agent.save_actor(CHECKPOINT_PATH)
     env.close()
