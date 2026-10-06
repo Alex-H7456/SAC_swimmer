@@ -2,6 +2,7 @@ from typing import Optional, Tuple, Dict, Any, Union
 
 import numpy as np
 import gymnasium as gym
+from torchrl.envs import GymWrapper, RewardSum, TransformedEnv
 
 from env.taylor_green_continuous import TaylorGreenContinuousEnvironment
 
@@ -81,7 +82,7 @@ class TaylorGreenContinuousGymEnv(gym.Env):
         )
 
         # Define Gym spaces
-        self.observation_spec = gym.spaces.Box(
+        self.observation_space = gym.spaces.Box(
             low=np.array([-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0], dtype=np.float32),
             high=np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32),
             shape=(7,),
@@ -89,10 +90,10 @@ class TaylorGreenContinuousGymEnv(gym.Env):
         )
 
         # Action can be discrete (4 orientation preferences)
-        self.action_spec = gym.spaces.Discrete(4)
+        self.action_space = gym.spaces.Discrete(4)
         # Or continuous (continuous orientation preference)
         if self._env.action_type == "continuous":
-            self.action_spec = gym.spaces.Box(-1.0, 1.0, (2,), np.float32)
+            self.action_space = gym.spaces.Box(-1.0, 1.0, (2,), np.float32)
 
         # Episode management
         self.max_episode_steps = max_episode_steps
@@ -191,7 +192,7 @@ class TaylorGreenContinuousGymEnv(gym.Env):
 
 
 # Convenience function to create the environment
-def make_taylor_green_continuous_env(**kwargs) -> TaylorGreenContinuousGymEnv:
+def make_taylor_green_continuous_env(**kwargs) -> TransformedEnv:
     """
     Factory function to create a Taylor-Green Continuous Gym environment.
 
@@ -199,6 +200,9 @@ def make_taylor_green_continuous_env(**kwargs) -> TaylorGreenContinuousGymEnv:
         **kwargs: Keyword arguments passed to TaylorGreenContinuousGymEnv constructor
 
     Returns:
-        A configured TaylorGreenContinuousGymEnv instance
+        A TorchRL environment wrapping the configured Taylor-Green Gym environment.
     """
-    return TaylorGreenContinuousGymEnv(**kwargs)
+    return TransformedEnv(
+        GymWrapper(TaylorGreenContinuousGymEnv(**kwargs)),
+        RewardSum(in_keys=["reward"], out_keys=["reward_sum"]),
+    )

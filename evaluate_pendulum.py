@@ -4,11 +4,11 @@ import torch
 from tensordict.nn import InteractionType, set_interaction_type
 
 from env.test_env import make_env
-from SAC_main import build_agent
+from SAC_main import build_basis_agent
 
 
 def evaluate(checkpoint: str, episodes: int, render: bool) -> None:
-    train_agent, train_env = build_agent()
+    train_agent, train_env = build_basis_agent()
     train_env.close()
     train_agent.load_actor(checkpoint)
 

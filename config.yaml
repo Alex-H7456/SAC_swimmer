@@ -4,6 +4,6 @@ network:
   scale_lb: 0.1
   default_policy_scale: 1.0
 solver:
-  taylor_green: True
+  taylor_green: False
   swimmer_speed: 0.3
-  alignement_timescale: 1.0
+  alignment_timescale: 1.0

@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from types import SimpleNamespace
-
 from torchrl.envs import GymEnv, RewardSum, TransformedEnv
 
 ENV_ID = "Pendulum-v1"
