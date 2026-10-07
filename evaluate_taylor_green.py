@@ -24,18 +24,19 @@ def _initialise_plot(
     trail: list[np.ndarray],
     view_size: float,
     flow_speed: float,
+    aspect_ratio: int = 3, 
 ) -> tuple[object, object, object]:
-    half_view = 3.0 * view_size / 2
-    flow_axis = np.linspace(position[0] - half_view, position[0] + half_view, 14)
-    flow_axis_y = np.linspace(position[1] - half_view, position[1] + half_view, 14)
+    half_view = view_size / 2
+    flow_axis = np.linspace(position[0] - half_view, position[0] + half_view, 50)
+    flow_axis_y = np.linspace(position[1] - half_view, position[1] + half_view*aspect_ratio, 50*aspect_ratio)
     flow_x, flow_y = np.meshgrid(flow_axis, flow_axis_y)
-    stream_function = 0.5 * flow_speed * np.sin(flow_x) * np.sin(flow_y)
+    stream_function = 0.5 * flow_speed * np.cos(flow_x) * np.cos(flow_y)
     axis.contour(
         flow_x,
         flow_y,
         stream_function,
         levels=20,
-        cmap="Blues",
+        cmap="cool",
         linewidths=0.8,
         alpha=0.8,
     )
@@ -49,7 +50,7 @@ def _initialise_plot(
     title_artist = axis.set_title("Taylor-Green swimmer | step 0 | return 0.000")
     axis.set(
         xlim=(position[0] - half_view, position[0] + half_view),
-        ylim=(position[1] - half_view, position[1] + half_view),
+        ylim=(position[1] - half_view, position[1] + half_view*aspect_ratio),
         aspect="equal",
         xlabel="x",
         ylabel="y",
@@ -101,7 +102,7 @@ def _write_episode_video(
     position = simulation.swimmer_position.copy()
     trail = [position.copy()]
     episode_return = 0.0
-    figure, axis = plt.subplots(figsize=(7.04, 7.04), dpi=100)
+    figure, axis = plt.subplots(figsize=(7.04, 7.04), dpi=400)
     artists = _initialise_plot(
         figure, axis, position, trail, view_size, flow_speed
     )
@@ -163,16 +164,7 @@ def evaluate(
     with open("config.yaml", encoding="utf-8") as stream:
         cfg = yaml.safe_load(stream)
 
-    swimmer_speed = cfg["solver"]["swimmer_speed"]
-    alignment_timescale = cfg["solver"]["alignment_timescale"]
-    env = make_taylor_green_continuous_env(
-        dt=0.01,
-        swimmer_speed=swimmer_speed,
-        alignment_timescale=alignment_timescale,
-        seed=seed,
-        action_type="continuous",
-        max_episode_steps=max_steps,
-    )
+    env = make_taylor_green_continuous_env(**cfg["env"])
     agent = Agent(cfg, env)
     agent.load_actor(checkpoint)
     try:
@@ -210,7 +202,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--view-size",
         type=float,
-        default=2 * np.pi,
+        default=4 * np.pi,
         help="Width and height of the camera window around the swimmer.",
     )
     args = parser.parse_args()
