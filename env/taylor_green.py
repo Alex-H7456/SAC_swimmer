@@ -4,6 +4,7 @@ import numpy as np
 
 from env.base import Environment
 
+#Defaults 
 # Flow parameters
 _SWIMMER_SPEED = 0.3
 _ALIGNMENT_TIMESCALE = 1.0

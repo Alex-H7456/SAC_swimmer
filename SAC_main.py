@@ -21,14 +21,7 @@ def build_basis_agent():
             env = make_env() #Using test gym environment for inverted pendulum 
     else:
         print("Using closed-form analytical solution ...")
-        env = make_taylor_green_continuous_env(
-            dt=0.01,
-            swimmer_speed= cfg["solver"]["swimmer_speed"],
-            alignment_timescale= cfg["solver"]["alignment_timescale"],
-            seed=42,
-            action_type="continuous",
-            max_episode_steps = 10000,
-        )  # initialise environment
+        env = make_taylor_green_continuous_env(**cfg["env"])  # initialise environment
 
     return Agent(cfg,env), env
 
