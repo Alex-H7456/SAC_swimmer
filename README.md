@@ -5,6 +5,8 @@ Actor-Critic (SAC)** with a continuous action space. The policy can therefore
 choose continuous swimming directions rather than selecting from a discrete
 action table.
 
+![Example Taylor–Green swimmer trajectory](img/example.png)
+
 The neural networks are implemented in **PyTorch** and integrated with
 TorchRL. The Taylor–Green environment uses a closed-form analytical solution
 for the flow field. After training, the learned actor can be evaluated and
