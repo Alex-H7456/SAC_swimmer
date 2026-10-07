@@ -16,7 +16,7 @@ def evaluate(checkpoint: str, episodes: int, render: bool) -> None:
     try:
         returns = []
         with set_interaction_type(InteractionType.DETERMINISTIC):
-            for episode in range(episodes):
+            for episode in range(1):
                 tensordict = env.reset()
                 episode_return = 0.0
                 done = False

@@ -27,6 +27,7 @@ def build_basis_agent():
             alignment_timescale= cfg["solver"]["alignment_timescale"],
             seed=42,
             action_type="continuous",
+            max_episode_steps = 10000,
         )  # initialise environment
 
     return Agent(cfg,env), env

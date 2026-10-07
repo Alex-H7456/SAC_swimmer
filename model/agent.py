@@ -55,7 +55,7 @@ class Agent:
         checkpoint_path = Path(path)
         checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(self.actor.state_dict(), checkpoint_path)
-        logger.info(f"Saved actor checkpoint to {checkpoint_path}", flush=True)
+        logger.info(f"Saved actor checkpoint to {checkpoint_path}")
 
     def load_actor(self, path: str | Path) -> None:
         checkpoint_path = Path(path)
