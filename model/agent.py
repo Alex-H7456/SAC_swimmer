@@ -17,7 +17,7 @@ class Agent:
         self.critic = SAC_nets.basic_sac_critic(cfg, env)
         self.actor = self._process_actor(cfg)
         self.trainer = SAC_trainer.Trainer(
-            env, self.actor, self.critic
+            env, self.actor, self.critic, **(cfg["trainer"])
         )
 
  
