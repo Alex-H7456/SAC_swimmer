@@ -3,7 +3,7 @@ import argparse
 import torch
 from tensordict.nn import InteractionType, set_interaction_type
 
-from env.test_env import make_env
+from environment.test_env import make_env
 from SAC_main import build_basis_agent
 
 

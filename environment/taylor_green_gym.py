@@ -4,7 +4,7 @@ import numpy as np
 import gymnasium as gym
 from torchrl.envs import GymWrapper, RewardSum, TransformedEnv
 
-from env.taylor_green_continuous import TaylorGreenContinuousEnvironment
+from environment.taylor_green_continuous import TaylorGreenContinuousEnvironment
 
 
 class TaylorGreenContinuousGymEnv(gym.Env):

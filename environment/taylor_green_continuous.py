@@ -1,7 +1,7 @@
 from typing import Optional
 import numpy as np
 
-from env.taylor_green import (
+from environment.taylor_green import (
     _ALIGNMENT_TIMESCALE,
     _DIFFUSIVITY_ROTATIONAL,
     _DIFFUSIVITY_TRANSLATIONAL,

@@ -12,12 +12,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 class Agent:
-    def __init__(self, cfg, env):
+    def __init__(self, cfg, env, trainer_kwargs=None):
         self.env = env
         self.critic = SAC_nets.basic_sac_critic(cfg, env)
         self.actor = self._process_actor(cfg)
+        trainer_config = dict(cfg["trainer"])
+        if trainer_kwargs is not None:
+            trainer_config.update(trainer_kwargs)
         self.trainer = SAC_trainer.Trainer(
-            env, self.actor, self.critic, **(cfg["trainer"])
+            env, self.actor, self.critic, **trainer_config
         )
 
  

@@ -1,6 +1,6 @@
-from env.test_env import make_env
+from environment.test_env import make_env
 from model.agent import Agent
-from env.taylor_green_gym import make_taylor_green_continuous_env
+from environment.taylor_green_gym import make_taylor_green_continuous_env
 import yaml 
 import logging 
 

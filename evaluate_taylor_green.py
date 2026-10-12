@@ -13,7 +13,7 @@ from matplotlib.figure import Figure
 from tensordict.nn import InteractionType, set_interaction_type
 from tqdm import tqdm
 
-from env.taylor_green_gym import make_taylor_green_continuous_env
+from environment.taylor_green_gym import make_taylor_green_continuous_env
 from model.agent import Agent
 
 
@@ -27,8 +27,8 @@ def _initialise_plot(
     aspect_ratio: int = 3, 
 ) -> tuple[object, object, object]:
     half_view = view_size / 2
-    flow_axis = np.linspace(position[0] - half_view, position[0] + half_view, 50)
-    flow_axis_y = np.linspace(position[1] - half_view, position[1] + half_view*aspect_ratio, 50*aspect_ratio)
+    flow_axis = np.linspace(position[0] - half_view, position[0] + half_view, 60)
+    flow_axis_y = np.linspace(position[1] - half_view, position[1] + half_view*aspect_ratio, 60*aspect_ratio)
     flow_x, flow_y = np.meshgrid(flow_axis, flow_axis_y)
     stream_function = 0.5 * flow_speed * np.cos(flow_x) * np.cos(flow_y)
     axis.contour(
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--checkpoint", default="checkpoints/actor.pt")
     parser.add_argument("--output", default="videos/taylor_green.mp4")
-    parser.add_argument("--max-steps", type=int, default=100000)
+    parser.add_argument("--max-steps", type=int, default=10000)
     parser.add_argument("--fps", type=int, default=60)
     parser.add_argument(
         "--render-interval",

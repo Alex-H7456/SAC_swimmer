@@ -2,7 +2,7 @@ from typing import Optional
 
 import numpy as np
 
-from env.base import Environment
+from environment.base import Environment
 
 #Defaults 
 # Flow parameters

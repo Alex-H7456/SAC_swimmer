@@ -20,7 +20,7 @@ trainer:
   total_frames: 1000000
   batch_frames: 1000
   optim_steps: 100
-  lr:  3e-4
+  lr:  0.0003
   polyak_factor:  0.995
   fr_skip:  1
   log_dir:  "logs"
